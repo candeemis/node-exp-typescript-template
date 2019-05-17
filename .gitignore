@@ -89,3 +89,4 @@ typings/
 
 api/avatars/*
 cron/data/*
+*.js
