@@ -3,7 +3,8 @@
 - Since the both projects are too small, consisting of just a few files, therefore the files are not organized properly. In production, we do have modules properly organized into their separate directories.
 - In the first task, api/avatars directory contains the image files
 - In the second task, cron/data contains the users.json file. Which is used to store the users data.
-- Before starting both project, please don't forget to run `npm install` command
+- Before starting both project, please don't forget to run `npm install` command, following by `npm run build` in gpe-commons directory and then `sudo npm link ../gpe-commons/` in both projects.
+
 - Test gpe-commons package with `npm test`
 
 * following are URIs to test APIs:

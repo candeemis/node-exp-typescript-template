@@ -1,5 +1,5 @@
 import { IUserRepo, UsersRepo } from "./users-repo";
-import utilsFactory from './../utils/utils-factory';
+import utilsFactory from "gpe-commons/build";
 
 class ReposFactory{
     

@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "this package contains the common code like utils",
   "main": "index.ts",
+  "types": "./build/index.d.ts",
   "scripts": {
     "test": "jest",
     "tsc": "tsc",

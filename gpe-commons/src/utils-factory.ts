@@ -13,7 +13,7 @@ import {
 
 //Factory Pattern being used for dependency injection
 
-class UtilsFactory{
+export class UtilsFactory{
     private fileUtils: IFileUtils;
     private restClient: IRestClient;
 
@@ -30,5 +30,3 @@ class UtilsFactory{
         return this.restClient;
     }
 }
-
-export default new UtilsFactory();

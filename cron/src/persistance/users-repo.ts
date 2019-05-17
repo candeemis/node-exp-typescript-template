@@ -1,4 +1,4 @@
-import { IFileUtils } from './../utils/file-util';
+import { IFileUtils } from 'gpe-commons/build';
 import { UserModel } from '../models/user-model';
 
 export interface IUserRepo{

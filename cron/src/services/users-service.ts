@@ -1,6 +1,6 @@
 import { UsersResponseModel } from "../models/user-model";
 import { IUserRepo } from "../persistance/users-repo";
-import { IRestClient } from "../utils/rest-client";
+import { IRestClient } from "gpe-commons/build";
 
 export class UserService{
     private pageCounter: number;
