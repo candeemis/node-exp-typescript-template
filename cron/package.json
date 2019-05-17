@@ -5,23 +5,26 @@
   "main": "app.js",
   "scripts": {
     "tsc": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "dev": "ts-node-dev --respawn --transpileOnly ./src/app.ts",
     "scrap": "tsc && node ./build/app.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "node-cron": "^2.0.3",
-    "superagent": "^5.0.5"
+    "node-cron": "^2.0.3"
   },
   "devDependencies": {
+    "@babel/core": "^7.4.4",
+    "@babel/plugin-proposal-export-default-from": "^7.2.0",
+    "@babel/preset-env": "^7.4.4",
+    "@babel/preset-typescript": "^7.3.3",
+    "@types/cors": "^2.8.5",
     "@types/jest": "^24.0.13",
     "@types/node-cron": "^2.0.2",
-    "@types/superagent": "^4.1.1",
+    "babel-jest": "^24.8.0",
     "jest": "^24.8.0",
-    "mock-fs": "^4.9.0",
-    "superagent-mock": "^3.7.0",
+    "ts-jest": "^24.0.2",
     "ts-node-dev": "^1.0.0-pre.39",
     "typescript": "^3.4.5"
   }
