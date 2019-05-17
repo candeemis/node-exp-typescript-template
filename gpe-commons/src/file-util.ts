@@ -6,9 +6,8 @@ export interface IFileUtils{
 }
 
 export class FileUtils implements IFileUtils{
-    constructor(private fs: any){
-
-    }
+    constructor(private fs: any){}
+    
     checkFileExist = async (filePath: string) : Promise<boolean>=> {
         return new Promise((resolve: Function, reject: Function) => {
             this.fs.open(filePath, 'r', (err: Error, fd: any) => {
