@@ -1,43 +1,19 @@
-const cron = require('node-cron');
+import cron from 'node-cron';
 
-const { GET } = require('./rest-client');
-const {appendUsersData} = require('./users-repo');
+import { UserService } from './services/users-service';
+import repoFactory from './persistance/repo-factory';
+import utilFactory from './utils/utils-factory';
 
-const reqesUri = 'https://reqres.in/api/users?page';
+const reqresUri = 'https://reqres.in/api/users?page';
 const filePath = './data/users.json';
 
-
-const getUsersFromReqer = async (pageIndex: number) => {
-    const pageUri = `${reqesUri}=${pageIndex}`;
-
-    return await GET(pageUri);
-}
-
-let pageCounter = 1;
-let totalPages = 1;
-
-const getAndSaveUsers = async () => {
-    try{
-        const users = await getUsersFromReqer(pageCounter);
-        
-        totalPages = users.total_pages;
-        const areAppended = await appendUsersData(filePath, users.data);
-
-        console.log(`appending result of page # ${pageCounter}: ${areAppended}`);
-        
-        if(pageCounter === totalPages){
-            console.log('restarting page counter...');
-            pageCounter = 1;
-        }else{
-            pageCounter++;
-        }
-        
-    }catch(err){
-        console.error(err);
-    }
-}
-
+const userService = new UserService(
+    reqresUri,
+    filePath,
+    repoFactory.getUserRepo(),
+    utilFactory.getRestClient()
+    );
 
 cron.schedule('* * * * *', async () => {
-    await getAndSaveUsers();
+    await userService.getAndSaveUsers();
 });
