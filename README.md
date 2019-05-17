@@ -10,5 +10,3 @@
 - GET user: http://localhost:3000/api/user/1
 - GET avatar: http://localhost:3000/api/user/2/avatar
 - DELETE avatar: http://localhost:3000/api/user/2/avatar
-
-# integration tests are skipped
