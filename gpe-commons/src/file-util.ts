@@ -1,8 +1,9 @@
 
 export interface IFileUtils{
     checkFileExist(filePath: string) : Promise<boolean>;
-    writeFileAsync(filePath: string, data: any): Promise<boolean>;
-    readFileAsync(filePath: string): Promise<any>;
+    writeFileAsync(filePath: string, data: any, dataFormat: string): Promise<boolean>;
+    readFileAsync(filePath: string, dataFormat: string): Promise<any>;
+    deleteFileAsync(filePath: string): Promise<boolean>;
 }
 
 export class FileUtils implements IFileUtils{
@@ -22,9 +23,9 @@ export class FileUtils implements IFileUtils{
         });
     }
 
-    writeFileAsync = async(filePath: string, data: any): Promise<boolean> => {
+    writeFileAsync = async(filePath: string, data: any, dataFormat: string = 'utf8'): Promise<boolean> => {
         return new Promise((resolve: Function, reject: Function) => {
-            this.fs.writeFile(filePath, data, 'utf8', (err: Error) => {
+            this.fs.writeFile(filePath, data, dataFormat, (err: Error) => {
                 if(err){
                     reject(err);
                 }else{
@@ -34,13 +35,25 @@ export class FileUtils implements IFileUtils{
         });
     }
 
-    readFileAsync = async (filePath: string) : Promise<string> => {
+    readFileAsync = async (filePath: string, dataFormat: string = 'utf8') : Promise<string> => {
         return new Promise((resolve: Function, reject: Function) => {
-            this.fs.readFile(filePath, 'utf8', (err: Error, data: any) => {
+            this.fs.readFile(filePath, dataFormat, (err: Error, data: any) => {
                 if(err) {
                     reject(err);
                 }else{
                     resolve(data);
+                }
+            });
+        });
+    }
+
+    deleteFileAsync = async (filePath: string): Promise<boolean> => {
+        return new Promise((resolve: Function, reject: Function) => {
+            this.fs.unlink(filePath, (err: Error) => {
+                if(err){
+                    reject(err);
+                }else{
+                    resolve(true);
                 }
             });
         });

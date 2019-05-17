@@ -1,42 +1,47 @@
-export {};
-const express = require('express');
+import { Router } from "express-serve-static-core";
+import { IFileUtils, IRestClient } from 'gpe-commons/build'
 
-const {GET, POST} = require('./../rest-client');
-const {writeFileAsync, readFileAsync, deleteFileAsync} = require('./../file-util');
+export class UsersApi{
+    private readonly reqresUri = 'https://reqres.in/api/users';
+    private readonly filePath = './avatars';
+    private readonly api = '/api/user';
+    constructor(
+        private router: Router,
+        private fileUtils: IFileUtils,
+        private restClient: IRestClient){
 
+        this.registerRoutes();
+    }
 
-const usersApi = express.Router();
-const reqresUri = 'https://reqres.in/api/users';
-const filePath = './avatars';
+    private registerRoutes = () => {
+        this.router.get(`${this.api}/:userId(\\d+)`, this.getSingleUserById);
+        this.router.get(`${this.api}/:userId(\\d+)/avatar`, this.getAvatarByUserId);
+        this.router.delete(`${this.api}/:userId(\\d+)/avatar`, this.deleteAvatarByUserId);
+    }
 
-const getUserFromReqres = async (userId: number) => {
-    const resp = await GET(`${reqresUri}/${userId}`);
-    return resp.data;
-}
+    public getUserFromReqres = async (userId: number) => {
+        const resp = await this.restClient.GET(`${this.reqresUri}/${userId}`);
+        return resp.data;
+    }
 
-
-
-usersApi.get('/:userId(\\d+)',
-    async (req: any, resp: any, next: Function) => {
+    public getSingleUserById = async (req: any, resp: any, next: Function) => {
         const userId = req.params.userId;
         try{
             //get user data from reqers api
-            const user = await getUserFromReqres(userId);
+            const user = await this.getUserFromReqres(userId);
             resp.status(200).json(user);
         }catch(err){
             next(err);
         }
 
     }
-);
 
-usersApi.get('/:userId(\\d+)/avatar',
-    async (req: any, resp: any, next: Function) => {
+    public getAvatarByUserId = async (req: any, resp: any, next: Function) => {
         const userId = req.params.userId;
-        const avatarFilePath = `${filePath}/${userId}.txt`;
+        const avatarFilePath = `${this.filePath}/${userId}.txt`;
         //first check if the file already exist
         try{
-            const avatarData = await readFileAsync(avatarFilePath)
+            const avatarData = await this.fileUtils.readFileAsync(avatarFilePath, 'base64');
             resp.status(200).json(avatarData);
             return;
         }catch(err){
@@ -46,16 +51,16 @@ usersApi.get('/:userId(\\d+)/avatar',
 
         try{
             //get user data
-            const user = await getUserFromReqres(userId);
+            const user = await this.getUserFromReqres(userId);
 
             //get user's avatar
-            const avatarResp = await GET(user.avatar);
+            const avatarResp = await this.restClient.GET(user.avatar);
 
             //convert avatar to base64
             const avatarBase64 = Buffer.from(avatarResp).toString('base64');
 
             //save file
-            await writeFileAsync(avatarFilePath, avatarBase64);
+            await this.fileUtils.writeFileAsync(avatarFilePath, avatarBase64, 'base64');
 
             //return avatar base64
             resp.status(200).json(avatarBase64);
@@ -64,22 +69,20 @@ usersApi.get('/:userId(\\d+)/avatar',
         }
 
     }
-);
 
-usersApi.delete('/:userId(\\d+)/avatar', async (req: any, resp: any, next: Function) => {
-    const userId = req.params.userId;
-    const avatarFilePath = `${filePath}/${userId}.txt`;
-
-    try{
-        const deleteResp = await deleteFileAsync(avatarFilePath);
-        resp.status(200).json(deleteResp);
-    }catch(err){
-        if(err.code == 'ENOENT'){
-            resp.status(401).json({message: 'File not found!'});
-            return;
+    public deleteAvatarByUserId = async (req: any, resp: any, next: Function) => {
+        const userId = req.params.userId;
+        const avatarFilePath = `${this.filePath}/${userId}.txt`;
+    
+        try{
+            const deleteResp = await this.fileUtils.deleteFileAsync(avatarFilePath);
+            resp.status(200).json(deleteResp);
+        }catch(err){
+            if(err.code == 'ENOENT'){
+                resp.status(401).json({message: 'File not found!'});
+                return;
+            }
+            next(err);
         }
-        next(err);
     }
-});
-
-module.exports = {usersApi};
+}

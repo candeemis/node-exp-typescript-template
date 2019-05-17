@@ -11,9 +11,13 @@ import {
     RestClient
 } from './rest-client';
 
-//Factory Pattern being used for dependency injection
+export interface IUtilsFactory{
+    getFileUtils() : IFileUtils;
+    getRestClient() : IRestClient;
+}
 
-export class UtilsFactory{
+//Factory Pattern being used for dependency injection
+export class UtilsFactory implements IUtilsFactory{
     private fileUtils: IFileUtils;
     private restClient: IRestClient;
 

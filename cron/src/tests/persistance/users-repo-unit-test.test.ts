@@ -2,6 +2,9 @@ import { UsersRepo } from './../../persistance/users-repo';
 import { IFileUtils } from 'gpe-commons/build';
 
 class FileUtilMock implements IFileUtils{
+    deleteFileAsync(filePath: string): Promise<boolean> {
+        throw new Error("Method not implemented.");
+    }
 
     checkFileExist(filePath: string): Promise<boolean> {
         return Promise.resolve(true);

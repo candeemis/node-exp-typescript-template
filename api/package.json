@@ -2,11 +2,11 @@
   "name": "users-api",
   "version": "1.0.0",
   "description": "",
-  "main": "build/app.js",
+  "main": "build/server.js",
   "scripts": {
     "tsc": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "ts-node-dev --respawn --transpileOnly ./src/app.ts",
+    "test": "jest",
+    "start": "ts-node-dev --respawn --transpileOnly ./src/server.ts",
     "prod": "tsc && node ./build/app.js"
   },
   "author": "",
@@ -16,10 +16,12 @@
     "express": "^4.16.4",
     "express-fileupload": "^1.1.4",
     "express-validator": "^5.3.1",
+    "gpe-commons": "file:../gpe-commons",
     "superagent": "^5.0.5"
   },
   "devDependencies": {
     "@babel/core": "^7.4.4",
+    "@babel/plugin-proposal-export-default-from": "^7.2.0",
     "@babel/preset-env": "^7.4.4",
     "@babel/preset-typescript": "^7.3.3",
     "@types/cors": "^2.8.5",
@@ -31,8 +33,8 @@
     "@types/supertest": "^2.0.7",
     "babel-jest": "^24.8.0",
     "jest": "^24.8.0",
-    "mocha": "^6.1.4",
     "supertest": "^4.0.2",
+    "ts-jest": "^24.0.2",
     "ts-node-dev": "^1.0.0-pre.39",
     "typescript": "^3.4.5"
   }

@@ -1,47 +1,55 @@
-const express = require('express');
-const {join} = require('path');
-const bodyParser = require('body-parser');
-const fileupload = require('express-fileupload');
+import express from 'express';
+import cors from 'cors';
+import bodyParser from 'body-parser';
 
-const server = express();
+import { IUtilsFactory } from 'gpe-commons/build';
+import { UsersApi } from './api/users-api';
+import { Server } from 'http';
 
-const cors = require('cors');
-server.options('*', cors());
-server.use(cors());
+export class App {
+    public server: express.Application;
+    private readonly PORT = 3000;
+    constructor(private utilsFactory: IUtilsFactory) {
+        this.server = express();
+        this.configure();
+        this.routes();
+    }
 
-server.use(bodyParser.json({limit: '25mb'}));
-server.use(fileupload({
-    limits: { fileSize: 10 * 1024 * 1024 },
-    safeFileNames: true,
-    preserveExtension: 4,
-    abortOnLimit:true
-}));
+    private configure = () => {
+        this.server.options('*', cors());
+        this.server.use(cors());
+        this.server.use(bodyParser.json({limit: '25mb'}));
+    }
 
+    private routes(): void {
+        const router = express.Router();
 
-const {usersApi} = require('./api/users-api');
+        const users = new UsersApi(router, this.utilsFactory.getFileUtils(), this.utilsFactory.getRestClient());
 
-server.use('/api/user', usersApi);
+        this.server.use(router);
 
-//catch 404
-server.use((req: any, res: any, next: Function)=>{
-    return res.status(404).json({message: 'resource not found!'});
-});
+        //catch 404
+        this.server.use(this.notFoundHandler);
+        //error handler
+        this.server.use(this.errorHandler);
+    }
 
-//error handler
-server.use((err: Error, req: any, res: any, next: Function)=>{
+    private notFoundHandler = (req: any, res: any, next: Function) => {
+        return res.status(404).json({ message: 'resource not found!' });
+    }
+
     
-    /**
-     * In production errors are supposed to be handled based on the environment.
-     * */
-    console.error(err);
-    return res.status(500).json(err);
-});
+    private errorHandler = (err: Error, req: any, res: any, next: Function) => {
+        /**
+         * In production errors are supposed to be handled based on the environment.
+         * */
+        console.error(err);
+        return res.status(500).json(err);
+    }
 
-// in real apps port to be provided through env
-const PORT = 3000;
-server.listen(PORT, '0.0.0.0',()=>{
-    console.info(`server is up and listing at port: ${PORT}`);
-});
-
-module.exports = {server};
-
+    public startServer = (): Server => {
+        return this.server.listen(this.PORT, '0.0.0.0', () => {
+            console.log(`server is listing at port: ${this.PORT}`);
+        });
+    }
+}

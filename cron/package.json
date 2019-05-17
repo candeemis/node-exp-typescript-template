@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "gpe-commons": "file:../gpe-commons",
     "node-cron": "^2.0.3"
   },
   "devDependencies": {

@@ -23,7 +23,7 @@ export class UsersRepo implements IUserRepo{
     
         if(doesFileExist){
             //read existing file
-            const existingUsersStr = await this.fileUtils.readFileAsync(filePath);
+            const existingUsersStr = await this.fileUtils.readFileAsync(filePath, 'utf8');
             
             //append new users into existing users
             const existingUsers = JSON.parse(existingUsersStr);
@@ -31,6 +31,6 @@ export class UsersRepo implements IUserRepo{
             totalUsers = existingUsers;
         }
         
-        return await this.fileUtils.writeFileAsync(filePath, JSON.stringify(totalUsers));
+        return await this.fileUtils.writeFileAsync(filePath, JSON.stringify(totalUsers), 'utf8');
     }
 }
