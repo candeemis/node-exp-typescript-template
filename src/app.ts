@@ -1,15 +1,13 @@
 import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-
-import { IUtilsFactory } from 'gpe-commons/build';
-import { UsersApi } from './api/users-api';
 import { Server } from 'http';
+import ApiFactory from './api/api-factory';
 
-export class App {
+export default class App {
     public server: express.Application;
-    private readonly PORT = 3000;
-    constructor(private utilsFactory: IUtilsFactory) {
+    private readonly PORT = 3300;
+    constructor(private apiFactory: ApiFactory) {
         this.server = express();
         this.configure();
         this.routes();
@@ -23,9 +21,7 @@ export class App {
 
     private routes(): void {
         const router = express.Router();
-
-        const users = new UsersApi(router, this.utilsFactory.getFileUtils(), this.utilsFactory.getRestClient());
-
+        this.apiFactory.registerAllRoutes(router);
         this.server.use(router);
 
         //catch 404

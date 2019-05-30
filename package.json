@@ -16,7 +16,6 @@
     "express": "^4.16.4",
     "express-fileupload": "^1.1.4",
     "express-validator": "^5.3.1",
-    "gpe-commons": "file:../gpe-commons",
     "superagent": "^5.0.5"
   },
   "devDependencies": {

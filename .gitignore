@@ -87,7 +87,6 @@ typings/
 # DynamoDB Local files
 .dynamodb/
 
-api/avatars/*
-cron/data/*
-*.js
+src/**/*.js
+tests/**/*.js
 **/build/*
