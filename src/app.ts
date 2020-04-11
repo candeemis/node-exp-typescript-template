@@ -1,4 +1,4 @@
-import express from 'express';
+import express, {Request, Response, NextFunction} from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import { Server } from 'http';
@@ -6,11 +6,11 @@ import ApiFactory from './api/api-factory';
 
 export default class App {
     public server: express.Application;
-    private readonly PORT = 3300;
-    constructor(private apiFactory: ApiFactory) {
+
+    constructor(private apiFactory: ApiFactory, private readonly PORT = 3300) {
         this.server = express();
         this.configure();
-        this.routes();
+        this.addRoutes();
     }
 
     private configure = () => {
@@ -19,9 +19,12 @@ export default class App {
         this.server.use(bodyParser.json({limit: '25mb'}));
     }
 
-    private routes(): void {
+    private addRoutes(): void {
         const router = express.Router();
-        this.apiFactory.registerAllRoutes(router);
+        const endPoints = this.apiFactory.getEndPoints();
+        endPoints.forEach(endPoint => {
+            router[endPoint.httpVerb](endPoint.pathString, endPoint.handlers);            
+        });
         this.server.use(router);
 
         //catch 404
@@ -30,17 +33,17 @@ export default class App {
         this.server.use(this.errorHandler);
     }
 
-    private notFoundHandler = (req: any, res: any, next: Function) => {
-        return res.status(404).json({ message: 'resource not found!' });
+    private notFoundHandler = (req: Request, resp: Response, next: NextFunction) => {
+        return resp.status(404).json({ message: 'resource not found!' });
     }
 
     
-    private errorHandler = (err: Error, req: any, res: any, next: Function) => {
+    private errorHandler = (err: Error, req: Request, resp: Response, next: NextFunction) => {
         /**
          * In production errors are supposed to be handled based on the environment.
          * */
         console.error(err);
-        return res.status(500).json(err);
+        return resp.status(500).json(err);
     }
 
     public startServer = (): Server => {

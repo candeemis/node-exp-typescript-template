@@ -1,12 +1,21 @@
 import { Handler } from "express";
 
-export type endPoint = {
-    route: string;
-    handler: Handler;
+export enum HttpVerbs {
+    GET = 'get',
+    POST = 'post',
+    PUT = 'put',
+    DELETE = 'delete',
+    PATCH = 'patch',
+}
+
+export type EndPoint = {
+    pathString: string;
+    handlers: [Handler];
+    httpVerb: HttpVerbs;
 };
 
 export abstract class ApiRoute {
-    constructor(protected route: string) { }
+    constructor(protected path: string) { }
 
-    abstract registerEndpoints(endPoints: [endPoint]): void;
+    abstract getEndPoints(): EndPoint[];
 }

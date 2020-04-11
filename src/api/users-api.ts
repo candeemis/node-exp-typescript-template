@@ -1,21 +1,31 @@
-import { Router } from "express-serve-static-core";
-import { ExpressRouter } from './api-factory';
+import { Request, Response, NextFunction } from 'express';
 import { IUserService } from "../services/user";
+import { ApiRoute, EndPoint, HttpVerbs } from "../core/api-route";
 
-export class UsersApi implements ExpressRouter{
-    private readonly api = '/api/user';
-    constructor(private userService: IUserService /* other dependencies go here...*/){}
-
-    public registerRoutes = (router: Router, ): void => {
-        router.get(`${this.api}/:userId(\\d+)`, this.getSingleUserById);
-        router.get(`${this.api}/`, this.getAllUsers);
+export class UsersApi extends ApiRoute{
+    
+    constructor(private userService: IUserService /* other dependencies go here...*/){
+        super('/api/user')
     }
 
+    getEndPoints(): EndPoint[] {
+        return [
+            {
+                pathString: `${this.path}/:userId`, 
+                handlers: [this.getSingleUserById],
+                httpVerb: HttpVerbs.GET,
+            },
+            {
+                pathString: `${this.path}/`,
+                handlers: [this.getAllUsers],
+                httpVerb: HttpVerbs.GET,
+            }
+        ]
+    }
 
-    public getSingleUserById = async (req: any, resp: any, next: Function) => {
+    getSingleUserById = async (req: Request, resp: Response, next: NextFunction) => {
         const userId = req.params.userId;
         try{
-            //get user data from reqers api
             const user = await this.userService.getUserById(userId);
             resp.status(200).json(user);
         }catch(err){
@@ -24,15 +34,12 @@ export class UsersApi implements ExpressRouter{
 
     }
 
-    public getAllUsers = async (req: any, resp: any, next: Function) => {
-        
+    getAllUsers = async (req: Request, resp: Response, next: NextFunction) => {        
         try{
             const users = await this.userService.getAllUsers();
             resp.status(200).json(users);
-            return;
         }catch(err){
             next(err);
         }
-
     }
 }
