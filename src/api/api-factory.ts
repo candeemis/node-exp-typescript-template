@@ -1,30 +1,16 @@
-import { Router } from "express-serve-static-core";
 import { UsersApi } from "./users-api";
-
-export interface ExpressRouter {
-    registerRoutes(router: Router, ) :void;
-}
-
-export interface FakeUserService {
-    getUserById(id: number): any;
-    getAllUsers(): any[];
-}
-
+import { UserService } from "../services/user";
+import { ApiRoute, EndPoint } from "../core/api-route";
 
 export default class ApiFactory{
-    private routes: ExpressRouter[] = [];
+    private routes: ApiRoute[] = [];
 
     constructor(){
-        this.routes.push(new UsersApi({
-            getUserById: (id: number) => {return {id, name: 'boy'}},
-            getAllUsers: () => []
-        }));
+        this.routes.push(new UsersApi(new UserService));
     }
 
-    registerAllRoutes(router: Router){
-        this.routes.forEach(route => {
-            route.registerRoutes(router);
-        });
+    getEndPoints(): EndPoint[]{
+        let endPoints: EndPoint[] = [];
+        return endPoints.concat(...this.routes.map(r => r.getEndPoints()));
     }
-    
 }

@@ -1,6 +1,6 @@
 import request from 'supertest';
 
-import App  from './../app';
+import App  from '../app';
 import { Server } from 'http';
 import ApiFactory from '../api/api-factory';
 
@@ -21,12 +21,14 @@ describe('users api', () => {
 
     it('should fetch single user by Id', async () => {
         const response = await request(app.server).get('/api/user/1');
-        expect(response.status).toBe(200)
+        expect(response.status).toBe(200);
+        expect(response.body.name).toBe("boy");
     });
 
     it('should fetch all users', async () => {
         const response = await request(app.server).get('/api/user/');
         expect(response.status).toBe(200);
+        expect(response.body).toBeInstanceOf(Array)
     });
 
 });
