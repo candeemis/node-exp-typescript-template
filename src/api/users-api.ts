@@ -1,9 +1,10 @@
 import { Router } from "express-serve-static-core";
-import { ExpressRouter, FakeUserService } from './api-factory';
+import { ExpressRouter } from './api-factory';
+import { IUserService } from "../services/user";
 
 export class UsersApi implements ExpressRouter{
     private readonly api = '/api/user';
-    constructor(private userService: FakeUserService /* other dependencies go here...*/){}
+    constructor(private userService: IUserService /* other dependencies go here...*/){}
 
     public registerRoutes = (router: Router, ): void => {
         router.get(`${this.api}/:userId(\\d+)`, this.getSingleUserById);
